@@ -1,0 +1,32 @@
+# Read-only drift check of /config against an accepted commit (HA review,
+# GO-11 v4 item 1; next-four design B2). Deliberately narrow: no Home
+# Assistant, Supervisor or auth API, no ports, config mapped read-only. Its
+# only network use is one HTTPS ping to the healthchecks URL in its options.
+name: HA Audit
+version: "0.1.0"
+slug: ha_audit
+description: >-
+  Daily read-only check that /config still matches the accepted commit.
+  No AI, no Home Assistant access; reports to its log and, once set, to a
+  healthchecks.io check.
+url: https://github.com/HyndeSyte/ha-audit
+arch:
+  - aarch64
+  - amd64
+init: false
+startup: application
+boot: auto
+map:
+  - homeassistant_config:ro
+homeassistant_api: false
+hassio_api: false
+auth_api: false
+backup: cold
+options:
+  pin: ""
+  ping_url: ""
+  run_at: "06:15"
+schema:
+  pin: match(^[0-9a-f]{7,40}$|^$)
+  ping_url: match(^https://hc-ping\.com/[0-9a-zA-Z-]+$|^$)
+  run_at: match(^([01][0-9]|2[0-3]):[0-5][0-9]$)
